@@ -63,10 +63,10 @@ tree_accuracy = accuracy_score(y_test, tree.predict(X_test))
 st.info(f"Acurácia dessa árvore individual: **{tree_accuracy}**")
 
 # --- Acurácia ---
-st.success(f"Acurácia da Random Forest no conjunto de teste: **{accuracy}**")
+st.success(f"Acurácia da Random Forest: **{accuracy}**")
 
 # --- Matriz de confusão ---
-st.header("📊 Matriz de Confusão")
+st.header("Tabela de Erros e Acertos")
 cm = confusion_matrix(y_test, clf.predict(X_test))
 fig, ax = plt.subplots()
 sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=target_names, yticklabels=target_names, ax=ax)
