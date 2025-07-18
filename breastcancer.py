@@ -35,7 +35,7 @@ clf.fit(X_train, y_train)
 accuracy = accuracy_score(y_test, clf.predict(X_test))
 
 # --- Gráfico de dispersão ---
-st.header("📉 Gráfico de Dispersão das Principais Variáveis")
+st.header("Gráfico das Principais Variáveis")
 df_plot = X[['mean radius', 'mean texture', 'mean perimeter', 'mean area']].copy()
 df_plot['diagnosis'] = y.map({0: 'malignant', 1: 'benign'})
 sns.set(style='ticks')
@@ -52,15 +52,20 @@ tree_dot = export_graphviz(clf.estimators_[0],
                            special_characters=True)
 st.graphviz_chart(tree_dot)
 
+# --- Acurácia da árvore individual ---
+tree = clf.estimators_[0]
+tree_accuracy = accuracy_score(y_test, tree.predict(X_test))
+st.info(f"Acurácia dessa árvore individual: **{tree_accuracy}**")
+
 # --- Acurácia ---
-st.success(f"Acurácia da Random Forest no conjunto de teste: **{accuracy}%**")
+st.success(f"Acurácia da Random Forest no conjunto de teste: **{accuracy}**")
 
 # --- Matriz de confusão ---
 st.header("📊 Matriz de Confusão")
 cm = confusion_matrix(y_test, clf.predict(X_test))
 fig, ax = plt.subplots()
 sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=target_names, yticklabels=target_names, ax=ax)
-plt.xlabel("Predito")
-plt.ylabel("Verdadeiro")
+plt.xlabel("Valores Previstos")
+plt.ylabel("Valores Reais")
 st.pyplot(fig)
 
