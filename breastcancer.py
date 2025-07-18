@@ -11,7 +11,7 @@ import graphviz
 
 # --- Configurações iniciais ---
 st.set_page_config(page_title="Classificação Câncer de Mama", layout="wide")
-st.title("🔬 Classificação de Câncer de Mama com Random Forest")
+st.title("Classificação de Câncer de Mama utilizando Aprendizagem de máquina")
 
 # --- Carregar dados ---
 data = load_breast_cancer()
@@ -22,13 +22,11 @@ target_names = data.target_names
 
 # --- Descrição ---
 st.markdown("""
-Este site realiza a classificação de tumores mamários com base no dataset **Breast Cancer Wisconsin (Diagnostic)**.  
-O modelo utiliza **aprendizado de máquina supervisionado**, especificamente um **Random Forest Classifier**.
+Aponta a classificação de tumores mamários com base no dataset **Breast Cancer Wisconsin (Diagnostic)** disponível para download no Kaggle.  
+O modelo utiliza **aprendizado de máquina supervisionado** -que rotula os tumores como **maligno** e **benigno** utilizando dados já rotulados- especificamente um **Random Forest**.
 
-- Número de amostras: **{}**
-- Número de atributos (features): **{}**
-- Classes: **{}**
-""".format(X.shape[0], X.shape[1], list(target_names)))
+- Número de amostras do dataset: **{}**
+""".format(X.shape[0]))
 
 # --- Treinar modelo ---
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -36,8 +34,16 @@ clf = RandomForestClassifier(n_estimators=100, random_state=42)
 clf.fit(X_train, y_train)
 accuracy = accuracy_score(y_test, clf.predict(X_test))
 
+# --- Gráfico de dispersão ---
+st.header("📉 Gráfico de Dispersão das Principais Variáveis")
+df_plot = X[['mean radius', 'mean texture', 'mean perimeter', 'mean area']].copy()
+df_plot['diagnosis'] = y.map({0: 'malignant', 1: 'benign'})
+sns.set(style='ticks')
+fig2 = sns.pairplot(df_plot, hue="diagnosis", diag_kind="hist", corner=True)
+st.pyplot(fig2)
+
 # --- Árvore individual ---
-st.header("🌳 Visualização de uma Árvore da Random Forest")
+st.header("Visualização de uma das Árvores da Random Forest")
 st.markdown("Abaixo, exibimos **uma única árvore** da floresta aleatória treinada. Esta árvore é apenas uma das 100 usadas no modelo final.")
 tree_dot = export_graphviz(clf.estimators_[0],
                            feature_names=feature_names,
@@ -47,7 +53,7 @@ tree_dot = export_graphviz(clf.estimators_[0],
 st.graphviz_chart(tree_dot)
 
 # --- Acurácia ---
-st.success(f"Acurácia da Random Forest no conjunto de teste: **{accuracy*100:.2f}%**")
+st.success(f"Acurácia da Random Forest no conjunto de teste: **{accuracy}%**")
 
 # --- Matriz de confusão ---
 st.header("📊 Matriz de Confusão")
@@ -58,10 +64,3 @@ plt.xlabel("Predito")
 plt.ylabel("Verdadeiro")
 st.pyplot(fig)
 
-# --- Gráfico de dispersão ---
-st.header("📉 Gráfico de Dispersão das Principais Variáveis")
-df_plot = X[['mean radius', 'mean texture', 'mean perimeter', 'mean area']].copy()
-df_plot['diagnosis'] = y.map({0: 'malignant', 1: 'benign'})
-sns.set(style='ticks')
-fig2 = sns.pairplot(df_plot, hue="diagnosis", diag_kind="hist", corner=True)
-st.pyplot(fig2)
