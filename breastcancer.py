@@ -44,7 +44,12 @@ st.pyplot(fig2)
 
 # --- Árvore individual ---
 st.header("Visualização de uma das Árvores da Random Forest")
-st.markdown("Abaixo, exibimos **uma única árvore** da floresta aleatória treinada. Esta árvore é apenas uma das 100 usadas no modelo final.")
+
+st.markdown(f"- Número de árvores usadas na Random Forest: **{len(clf.estimators_)}**")
+st.markdown(f"- Amostras utilizadas no treino: **{len(X_train)}**")
+st.markdown(f"- Amostras utilizadas no teste: **{len(X_test)}**")
+
+st.markdown("Abaixo, exibimos **uma única árvore** da floresta aleatória treinada.")
 tree_dot = export_graphviz(clf.estimators_[0],
                            feature_names=feature_names,
                            class_names=target_names,
